@@ -5,7 +5,14 @@ class Pet {
   final String breed;
   final double distance;
   final int age;
-  Pet(this.id, this.type, this.breed, this.age, this.distance);
+  final double lat;
+  final double lng;
+  Pet(this.id, this.type, this.breed, this.age, this.distance, this.lat, this.lng);
+  static List<Pet> mock = [ //Demo data for pet
+    Pet(1, "Cat", "Scottish Fold", 5, 200.0, 13.7025208, 100.5210237),
+    Pet(2, "Dog", "Shiba Inu", 5, 69.0,13.5 ,100.5210237),
+    Pet(3, "Hedgehog", "Sonic", 69, 4,13.7024947,100.5210237)
+  ];
 }
 class PetContainer extends StatelessWidget {
   const PetContainer({

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'Pet.dart';
+import 'package:geolocator/geolocator.dart';
 
+import 'package:istrayredux/globals.dart' as globals;
+import 'Pet.dart';
+import 'maps.dart';
 void main() {
   runApp(iStrayApp());
 }
@@ -33,29 +36,26 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  static List<Pet> pet = [ //Demo data for pet
-    Pet(1, "Cat", "Scottish Fold", 5, 200.0),
-    Pet(2, "Dog", "Shiba Inu", 5, 69.0),
-    Pet(3, "Hedgehog", "Sonic", 69, 420.0)
-  ];
-  static List<Pet> petMock2 = [ //Demo data for pet
-    Pet(1, "Frog", "Fold", 5, 200.0),
-    Pet(2, "Mario", "Plumber", 5, 69.0),
-    Pet(3, "Kirby", "Pink Puffball", 69, 420.0),
-    Pet(4, "Fox", "Fox", 555, 555.0)
-  ];
   int _selectedIndex = 0;
-  List<Widget> _children = [PetContainer(pet: pet), Container(color: Colors.red,), PetContainer(pet: petMock2)];
+  Position pos;
+  List<Widget> _children = [PetContainer(pet: Pet.mock), MapScreen(), PetContainer(pet: [])];
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
   @override
+  void initState() {
+    super.initState();
+    globals.updatePosition();
+    pos = globals.getPosition();
+    }
+  @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("Home"),
+        title: Text("iStray"),
       ),
       body: _children[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
