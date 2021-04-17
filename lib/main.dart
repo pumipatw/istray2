@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import 'package:istrayredux/globals.dart' as globals;
+import 'package:istrayredux/petContainer.dart';
 import 'Pet.dart';
 import 'maps.dart';
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(iStrayApp());
 }
 
@@ -38,7 +42,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int _selectedIndex = 0;
   Position pos;
-  List<Widget> _children = [PetContainer(pet: Pet.mock), MapScreen(), PetContainer(pet: [])];
+  List<Widget> _children = [PetContainer(), MapScreen(), PetContainer()];
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -61,11 +65,11 @@ class _HomeState extends State<Home> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         items: [
-          BottomNavigationBarItem(icon: Icon(FontAwesome.map_marker),
+          BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.mapMarker),
           label: "Nearby"),
-          BottomNavigationBarItem(icon: Icon(FontAwesome.map),
+          BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.mapMarkedAlt),
           label: "Maps"),
-          BottomNavigationBarItem(icon: Icon(FontAwesome.history),
+          BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.history),
           label: "History")
         ],
         onTap: _onItemTapped,

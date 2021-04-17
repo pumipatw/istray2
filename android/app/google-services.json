@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "979663284888",
+    "firebase_url": "https://istray-default-rtdb.firebaseio.com",
+    "project_id": "istray",
+    "storage_bucket": "istray.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:979663284888:android:0829ff97b4ef29fcd0beed",
+        "android_client_info": {
+          "package_name": "th.ac.mahidol.istrayredux"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "979663284888-18e691msqo1uhbh7r61aek8rf98pcnb7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDQTxVwgruZctr0KodXd6vmCbMWmFIPSk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "979663284888-18e691msqo1uhbh7r61aek8rf98pcnb7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

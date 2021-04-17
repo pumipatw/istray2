@@ -24,17 +24,6 @@ class _MapScreenState extends State<MapScreen> {
     mapController = controller;
     setState(() {
       _marker.clear();
-      for(Pet i in Pet.mock) {
-        final marker = Marker(
-          markerId: MarkerId(i.id.toString()),
-          position: LatLng(i.lat, i.lng),
-          infoWindow: InfoWindow(
-            title: i.type,
-            snippet: i.breed
-          )
-        );
-        _marker[i.id.toString()] = marker;
-      }
     });
   }
   @override
