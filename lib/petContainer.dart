@@ -1,17 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-import 'Pet.dart';
+import 'models/Pet.dart';
 import 'globals.dart' as globals;
 
 class PetContainer extends StatelessWidget {
+  final bool foruser;
+  PetContainer(this.foruser);
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-        stream: globals.repository.getStream(),
+    if(foruser) return StreamBuilder<QuerySnapshot>(
+        stream: globals.repository.getStream(null),
         builder: (context, snapshot) {
           if (!snapshot.hasData) return LinearProgressIndicator();
-          return _buildList(context, snapshot.data.docs);
+          return _buildList(context, snapshot.data!.docs);
+        });
+    else return StreamBuilder<QuerySnapshot>(
+        stream: globals.repository.getStream(globals.user),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) return LinearProgressIndicator();
+          return _buildList(context, snapshot.data!.docs);
         });
   }
 }
@@ -22,53 +31,26 @@ Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
   );
 }
 Widget _buildListItem(BuildContext context, DocumentSnapshot snapshot) {
-  final pet = Pet.fromSnapshot(snapshot);
-  if(pet == null) {
-    return Container();
-  }
+  final Pet pet = Pet.fromSnapshot(snapshot);
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 16.0),
     child: Card(
       child: InkWell(
         child: ListTile(
-          leading: Text("img"),
-          title: Text(pet.type),
-          subtitle: Text(' '),
+          leading: Hero(tag: 'pet', child: (pet.pictureUrl != null) ? ClipRect(
+            child: Container(
+              width: 100,
+              height: 100,
+              child: Image(image: NetworkImage(pet.pictureUrl!)),
+            ),
+          ) : Image.asset('images/icon/icon.png')),
+          title: Text(pet.type!),
+          subtitle: Text(pet.size! + " " + DateFormat('dd MMM hh:mm').format(pet.date!.toDate())),
       ),
         onTap: () {
-          Navigator.pushNamed(context, "/detail", arguments: pet);
+          Navigator.pushNamed(context, "/detail",arguments: pet);
         },
       ),
     )
   );
-}
-class PetDetail extends StatelessWidget {
-  final Pet pet;
-  PetDetail(this.pet);
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-        child: InkWell(
-          child: ListTile(
-            leading: Text("img"),
-            title: Text(pet.type),
-            subtitle: Text(' '),
-          ),
-          onTap: () {
-            Navigator.pushNamed(context, "/detail", arguments: pet);
-          },
-        )
-    );
-  }
-}
-
-class PetPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final Pet args = ModalRoute.of(context).settings.arguments as Pet;
-    return Scaffold(
-      appBar: AppBar(),
-      body: Text("Pet type: " + args.type + "\n" + args.type + " breed: " + args.breed),
-    );
-  }
 }

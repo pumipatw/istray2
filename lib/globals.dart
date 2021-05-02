@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'dataRepository.dart';
 
@@ -40,7 +43,8 @@ Future<Position> _determinePosition() async {
   // continue accessing the position of the device.
   return await Geolocator.getCurrentPosition();
 }
-Position _pos;
+Position? _pos;
+User? user;
 updatePosition() async {
   try {
     _pos = await _determinePosition();
@@ -49,9 +53,13 @@ updatePosition() async {
     print(err);
   }
 }
-Position getPosition() {
-  if(_pos == null) {
-    _pos = Position(longitude: 13.7563, latitude: 100.5018);
-  }
+Position? getPosition() {
   return _pos;
+}
+GeoPoint positionToGeoPoint(Position position) {
+  return GeoPoint(position.latitude, position.longitude);
+}
+
+LatLng geoPointToLatLng(GeoPoint geoPoint) {
+  return LatLng(geoPoint.latitude, geoPoint.longitude);
 }
