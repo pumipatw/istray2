@@ -33,6 +33,7 @@ Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
 Widget _buildListItem(BuildContext context, DocumentSnapshot snapshot) {
   final Pet pet = Pet.fromSnapshot(snapshot);
   return Container(
+    key: Key("$pet"),
     padding: const EdgeInsets.symmetric(horizontal: 16.0),
     child: Card(
       child: InkWell(

@@ -5,7 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'dataRepository.dart';
 
-final DataRepository repository = DataRepository();
+DataRepository repository = DataRepository();
 
 Future<Position> _determinePosition() async {
   bool serviceEnabled;
@@ -43,18 +43,18 @@ Future<Position> _determinePosition() async {
   // continue accessing the position of the device.
   return await Geolocator.getCurrentPosition();
 }
-Position? _pos;
+Position? pos;
 User? user;
 updatePosition() async {
   try {
-    _pos = await _determinePosition();
+    pos = await _determinePosition();
   }
   catch (err) {
     print(err);
   }
 }
 Position? getPosition() {
-  return _pos;
+  return pos;
 }
 GeoPoint positionToGeoPoint(Position position) {
   return GeoPoint(position.latitude, position.longitude);

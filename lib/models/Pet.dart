@@ -14,7 +14,7 @@ class Pet {
 
   late DocumentReference reference;
 
-  Pet(this.type, this.size, this.condition, this.date, this.location, this.userId, this.pictureUrl, { this.breed, this.gender, this.remark});
+  Pet(this.type, this.size, this.condition, this.date, this.location, this.userId, {this.pictureUrl, this.breed, this.gender, this.remark});
 
   factory Pet.fromSnapshot(DocumentSnapshot snapshot) {
     Pet newPet = Pet.fromJson(snapshot.data()!);
@@ -37,7 +37,7 @@ Pet _petFromJson(Map<dynamic, dynamic> json) {
     json['date'] as Timestamp?,
     json['location'] as GeoPoint?,
     json['userid'] as String?,
-    json['pictureUrl'] as String?,
+    pictureUrl: json['pictureUrl'] == null ? null : json['pictureUrl'] as String?,
     breed: json['breed'] == null ? null : json['breed'] as String?,
     gender: json['gender'] == null ? null : json['gender'] as String?,
     remark: json['remark'] == null ? null : json['remark'] as String?

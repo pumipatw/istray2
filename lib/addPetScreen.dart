@@ -27,47 +27,54 @@ class AddPetScreen extends StatelessWidget {
                 FormBuilder(
                     key: _formKey,
                     initialValue: {
-                      'date': DateTime.now()
+                      'date': DateTime.now(),
                     },
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         FormBuilderImagePicker(
+                          key: Key('photo'),
                           name: "photo",
                           decoration: InputDecoration(
                               labelText: "Pet photo"),
                           maxImages: 1,
                         ),
                         FormBuilderTextField(
+                          key: Key('type'),
                           name: "type",
                           decoration: InputDecoration(
                               labelText: "Pet type"),
                           validator: FormBuilderValidators.required(context),
                         ),
                         FormBuilderTextField(
+                          key: Key('breed'),
                           name: "breed",
                           decoration: InputDecoration(
                               labelText: "Pet breed"),
                         ),
                         FormBuilderTextField(
+                          key: Key('size'),
                           name: "size",
                           decoration: InputDecoration(
                               labelText: "Pet size"),
                           validator: FormBuilderValidators.required(context),
                         ),
                         FormBuilderTextField(
+                          key: Key('condition'),
                           name: "condition",
                           decoration: InputDecoration(
                               labelText: "Pet condition"),
                           validator: FormBuilderValidators.required(context),
                         ),
                         FormBuilderDateTimePicker(
+                          key: Key('date'),
                           name: "date",
                           decoration: InputDecoration(
                               labelText: "Time found"),
                           validator: FormBuilderValidators.required(context),
                         ),
                         FormBuilderDropdown(
+                            key: Key('gender'),
                             name: 'gender',
                             hint: Text('Pet gender'),
                             items: _gender.map((gender) =>
@@ -76,6 +83,7 @@ class AddPetScreen extends StatelessWidget {
                                   value: gender,)).toList()
                         ),
                         FormBuilderTextField(
+                            key: Key('remark'),
                             name: 'remark',
                             decoration: InputDecoration(
                                 labelText: "Remark")
@@ -84,22 +92,26 @@ class AddPetScreen extends StatelessWidget {
                           height: 15,
                         ),
                         SizedBox(
+                          key: Key("submit button"),
                           width: 100,
                           height: 50,
                           child: TextButton(
                             onPressed: () async {
                               _formKey.currentState!.save();
                               if (_formKey.currentState!.validate()) {
-                                List<File> listfile = List<File>.from(_formKey.currentState!.value['photo']);
-                                FirebaseStorage fsInstance = FirebaseStorage.instance;
+                                List<File> listfile = List<File>.from(_formKey.currentState!.value['photo'] != null ? _formKey.currentState!.value['photo'] : []);
                                 late Reference ref;
-                                try {
-                                  ref = fsInstance.ref('pet/' + DateTime.now().millisecondsSinceEpoch.toString());
-                                  await ref.putFile(listfile.first);
-                                } on FirebaseException {
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Can't upload file")));
+                                String url = "";
+                                if(listfile.isNotEmpty) {
+                                  try {
+                                    FirebaseStorage fsInstance = FirebaseStorage.instance;
+                                    ref = fsInstance.ref('pet/' + DateTime.now().millisecondsSinceEpoch.toString());
+                                    await ref.putFile(listfile.first);
+    url = await                     ref.getDownloadURL();
+                                  } on FirebaseException {
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Can't upload file")));
+                                  }
                                 }
-                                String url = await ref.getDownloadURL();
                                 Position? _x = globals.getPosition();
                                 GeoPoint _y = globals.positionToGeoPoint(_x!);
                                 Pet submit = Pet(
@@ -110,7 +122,7 @@ class AddPetScreen extends StatelessWidget {
                                         _formKey.currentState!.value['date']),
                                     _y,
                                     globals.user!.uid,
-                                    url,
+                                    pictureUrl: url,
                                     breed: _formKey.currentState!
                                         .value['breed'],
                                     gender: _formKey.currentState!
