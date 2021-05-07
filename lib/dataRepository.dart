@@ -20,4 +20,7 @@ class DataRepository {
   void updatePet(Pet pet) async {
     await collection.doc(pet.reference.id).update(pet.toJson());
   }
+  void deletePet(Pet pet) async {
+    await collection.doc(pet.reference.id).delete();
+  }
 }

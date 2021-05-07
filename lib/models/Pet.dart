@@ -1,16 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:istrayredux/globals.dart' as globals;
+import 'package:geolocator/geolocator.dart' as geolocator;
 
 class Pet {
-  String? type;
+  String type;
   String? breed;
-  String? size;
+  String size;
   String? gender;
-  String? condition;
+  String condition;
   String? remark;
   String? userId;
   String? pictureUrl;
-  Timestamp? date;
-  GeoPoint? location;
+  Timestamp date;
+  GeoPoint location;
+  late double distance;
 
   late DocumentReference reference;
 
@@ -25,17 +29,19 @@ class Pet {
   factory Pet.fromJson(Map<dynamic, dynamic> json) => _petFromJson(json);
 
   Map<String, dynamic> toJson() => _petToJson(this);
-
+  void calculateDistance(geolocator.Position n) {
+    distance = geolocator.Geolocator.distanceBetween(location.latitude, location.longitude, n.latitude, n.longitude);
+  }
   @override
   String toString() => "Pet<$type, $size, $condition, $date, ${location.toString()}>";
 }
 Pet _petFromJson(Map<dynamic, dynamic> json) {
   return Pet(
-    json['type'] as String?,
-    json['size'] as String?,
-    json['condition'] as String?,
-    json['date'] as Timestamp?,
-    json['location'] as GeoPoint?,
+    json['type'] as String,
+    json['size'] as String,
+    json['condition'] as String,
+    json['date'] as Timestamp,
+    json['location'] as GeoPoint,
     json['userid'] as String?,
     pictureUrl: json['pictureUrl'] == null ? null : json['pictureUrl'] as String?,
     breed: json['breed'] == null ? null : json['breed'] as String?,

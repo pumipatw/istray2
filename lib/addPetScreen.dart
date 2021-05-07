@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_image_picker/form_builder_image_picker.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:istrayredux/selectLocation.dart';
 
 import 'models/Pet.dart';
 import 'globals.dart' as globals;
@@ -17,6 +19,8 @@ class AddPetScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Position current = globals.getPosition()!;
+    LatLng location = LatLng(current.latitude, current.longitude);
     return Scaffold(
         appBar: AppBar(title: Text("Report New Pet")),
         body: Padding(
@@ -88,60 +92,86 @@ class AddPetScreen extends StatelessWidget {
                             decoration: InputDecoration(
                                 labelText: "Remark")
                         ),
+
                         SizedBox(
                           height: 15,
                         ),
-                        SizedBox(
-                          key: Key("submit button"),
-                          width: 100,
-                          height: 50,
-                          child: TextButton(
-                            onPressed: () async {
-                              _formKey.currentState!.save();
-                              if (_formKey.currentState!.validate()) {
-                                List<File> listfile = List<File>.from(_formKey.currentState!.value['photo'] != null ? _formKey.currentState!.value['photo'] : []);
-                                late Reference ref;
-                                String url = "";
-                                if(listfile.isNotEmpty) {
-                                  try {
-                                    FirebaseStorage fsInstance = FirebaseStorage.instance;
-                                    ref = fsInstance.ref('pet/' + DateTime.now().millisecondsSinceEpoch.toString());
-                                    await ref.putFile(listfile.first);
-    url = await                     ref.getDownloadURL();
-                                  } on FirebaseException {
-                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Can't upload file")));
-                                  }
-                                }
-                                Position? _x = globals.getPosition();
-                                GeoPoint _y = globals.positionToGeoPoint(_x!);
-                                Pet submit = Pet(
-                                    _formKey.currentState!.value['type'],
-                                    _formKey.currentState!.value['size'],
-                                    _formKey.currentState!.value['condition'],
-                                    Timestamp.fromDate(
-                                        _formKey.currentState!.value['date']),
-                                    _y,
-                                    globals.user!.uid,
-                                    pictureUrl: url,
-                                    breed: _formKey.currentState!
-                                        .value['breed'],
-                                    gender: _formKey.currentState!
-                                        .value['gender'],
-                                    remark: _formKey.currentState!
-                                        .value['remark']
-                                );
-                                globals.repository.addPet(submit);
-                                Navigator.pop(context);
-                              }
-                            },
-                            child: Text("SUBMIT"),
-                            style: TextButton.styleFrom(
-                              textStyle: TextStyle(
-                                fontWeight: FontWeight.w700
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 150,
+                              height: 50,
+                              child: TextButton(
+                                onPressed: () async {
+                                  location = await Navigator.push(context, MaterialPageRoute(builder: (context) => SelectLocation()));
+                                  print(location);
+                                },
+                                child: Text("SELECT LOCATION"),
+                                style: TextButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                  primary: Colors.white,
+                                  textStyle: TextStyle(
+                                    fontWeight: FontWeight.w700
+                                  )
+                                ),
                               ),
-                                backgroundColor: Colors.lightGreen,
-                                primary: Colors.white),
-                          ),
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            SizedBox(
+                              key: Key("submit button"),
+                              width: 80,
+                              height: 50,
+                              child: TextButton(
+                                onPressed: () async {
+                                  _formKey.currentState!.save();
+                                  if (_formKey.currentState!.validate()) {
+                                    List<File> listfile = List<File>.from(_formKey.currentState!.value['photo'] != null ? _formKey.currentState!.value['photo'] : []);
+                                    late Reference ref;
+                                    String url = "";
+                                    if(listfile.isNotEmpty) {
+                                      try {
+                                        FirebaseStorage fsInstance = FirebaseStorage.instance;
+                                        ref = fsInstance.ref('pet/' + DateTime.now().millisecondsSinceEpoch.toString());
+                                        await ref.putFile(listfile.first);
+                                        url = await ref.getDownloadURL();
+                                      } on FirebaseException {
+                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Can't upload file")));
+                                      }
+                                    }
+                                    GeoPoint _y = GeoPoint(location.latitude, location.longitude);
+                                    Pet submit = Pet(
+                                        _formKey.currentState!.value['type'],
+                                        _formKey.currentState!.value['size'],
+                                        _formKey.currentState!.value['condition'],
+                                        Timestamp.fromDate(
+                                            _formKey.currentState!.value['date']),
+                                        _y,
+                                        globals.user!.uid,
+                                        pictureUrl: url,
+                                        breed: _formKey.currentState!
+                                            .value['breed'],
+                                        gender: _formKey.currentState!
+                                            .value['gender'],
+                                        remark: _formKey.currentState!
+                                            .value['remark']
+                                    );
+                                    globals.repository.addPet(submit);
+                                    Navigator.pop(context);
+                                  }
+                                },
+                                child: Text("SUBMIT"),
+                                style: TextButton.styleFrom(
+                                  textStyle: TextStyle(
+                                    fontWeight: FontWeight.w700
+                                  ),
+                                    backgroundColor: Colors.lightGreen,
+                                    primary: Colors.white),
+                              ),
+                            ),
+                          ],
                         )
                       ],
                     )

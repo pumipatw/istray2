@@ -73,15 +73,15 @@ Marker toMarker(QueryDocumentSnapshot x) {
   Pet t = Pet.fromSnapshot(x);
   StringBuffer y = StringBuffer();
   if(t.breed != null) y.write("Breed: " + t.breed! + '\n');
-  y.write("Size: " + t.size! + '\n');
-  y.write("Condition: " + t.condition! + '\n');
-  y.write("Last Found: " + DateFormat("dd MMM hh:mm").format(t.date!.toDate().toLocal()));
+  y.write("Size: " + t.size + '\n');
+  y.write("Condition: " + t.condition + '\n');
+  y.write("Last Found: " + DateFormat("dd MMM hh:mm").format(t.date.toDate().toLocal()));
   return new Marker(
     markerId: MarkerId(t.reference.id),
     infoWindow: InfoWindow(
       title: t.type,
       snippet: y.toString()
     ),
-    position: globals.geoPointToLatLng(t.location!)
+    position: globals.geoPointToLatLng(t.location)
   );
 }
